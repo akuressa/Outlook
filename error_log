@@ -1,0 +1,10 @@
+[26-Sep-2017 21:34:08 Etc/GMT] PHP Warning:  Creating default object from empty value in /home/techiorq/public_html/outlook/edit-pdf-data.php on line 226
+[26-Sep-2017 21:34:08 Etc/GMT] PHP Fatal error:  Call to undefined method stdClass::SetHTMLHeader() in /home/techiorq/public_html/outlook/edit-pdf-data.php on line 228
+[26-Sep-2017 21:43:15 Etc/GMT] PHP Parse error:  syntax error, unexpected '.', expecting '&' or variable (T_VARIABLE) in /home/techiorq/public_html/outlook/mpdf/src/functions-dev.php on line 4
+[27-Sep-2017 08:40:15 Etc/GMT] PHP Notice:  A session had already been started - ignoring session_start() in /home/techiorq/public_html/outlook/includes/common_function.php on line 199
+[27-Sep-2017 08:59:42 Etc/GMT] PHP Notice:  A session had already been started - ignoring session_start() in /home/techiorq/public_html/outlook/includes/common_function.php on line 199
+[28-Sep-2017 01:03:50 Etc/GMT] PHP Notice:  A session had already been started - ignoring session_start() in /home/techiorq/public_html/outlook/includes/common_function.php on line 199
+[03-Oct-2017 18:27:16 Etc/GMT] PHP Notice:  A session had already been started - ignoring session_start() in /home/techiorq/public_html/outlook/includes/common_function.php on line 199
+[03-Oct-2017 18:33:05 Etc/GMT] PHP Notice:  A session had already been started - ignoring session_start() in /home/techiorq/public_html/outlook/includes/common_function.php on line 199
+[04-Oct-2017 19:36:57 Etc/GMT] PHP Parse error:  syntax error, unexpected '.', expecting '&' or variable (T_VARIABLE) in /home/techiorq/public_html/outlook/mpdf/src/functions-dev.php on line 4
+[15-Oct-2017 21:53:15 Etc/GMT] PHP Notice:  Undefined index: positive_reason in /home/techiorq/public_html/outlook/edit-payment-info.php on line 117
