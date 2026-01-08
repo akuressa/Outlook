@@ -2,6 +2,56 @@
 	include_once('init.php');
 	check_login();
 	has_privilege();
+	if(isset($_GET['del_appointment_id']) && $_GET['del_appointment_id']!='')
+	{
+		$appointment_where="";$appointment_execute=array();
+		if($admin_privilege==true)
+		{
+			// Admin can delete any appointment
+			$appointment_where="";
+			$appointment_execute=array();
+		}
+		else if($user_privilege==true)
+		{
+			$appointment_where=" AND user_id=:user_id ";
+			$appointment_execute=array(":user_id"=>$_SESSION['logged_user_id']);
+		}
+		else if($branch_privilege==true)
+		{
+			$appointment_where=" AND branch_id=:branch_id ";
+			$appointment_execute=array(":branch_id"=>$_SESSION['logged_user_id']);
+		}
+		$appointment_id=substr(base64_decode($_GET['del_appointment_id']), 0, -5);
+		$execute=array(':id'=>$appointment_id);
+		$execute=array_merge($execute, $appointment_execute);
+		$find_appointment= find('first', APPOINMENTS, 'id', "WHERE id=:id".$appointment_where, $execute);
+		if(!empty($find_appointment))
+		{
+			// Delete related short messages first
+			$delete_short_messages=delete(APPOINMENT_SHORT_MESSAGE, 'WHERE appointment_id=:appointment_id', array(':appointment_id'=>$appointment_id));
+			// Delete the appointment
+			$del_rcd=delete(APPOINMENTS, 'WHERE id=:id', array(':id'=>$appointment_id));
+			if($del_rcd==true)
+			{
+				$_SESSION['SET_TYPE'] = 'success';
+				$_SESSION['SET_FLASH'] = 'Termin erfolgreich gel&ouml;scht.';
+			}
+			else
+			{
+				$_SESSION['SET_TYPE'] = 'error';
+				$_SESSION['SET_FLASH'] = 'Wir sind mit ein Problem. Bitte versuch es sp&auml;ter.';
+			}
+			header('location:'.DOMAIN_NAME_PATH.'appointment.php');
+			exit;
+		}
+		else
+		{
+			$_SESSION['SET_TYPE'] = 'error';
+			$_SESSION['SET_FLASH'] = 'Ung&uuml;ltige Termin-ID.';
+			header('location:'.DOMAIN_NAME_PATH.'appointment.php');
+			exit;
+		}
+	}
 	if(isset($_GET['del_id']) && $_GET['del_id']!='')
 	{
 		$appointment_message_id=substr(base64_decode($_GET['del_id']), 0, -5);
@@ -13,7 +63,7 @@
 			if($del_rcd==true)
 			{
 				$_SESSION['SET_TYPE'] = 'success';
-				$_SESSION['SET_FLASH'] = 'Kurznachricht erfolgreich gelöscht.';
+				$_SESSION['SET_FLASH'] = 'Kurznachricht erfolgreich gelï¿½scht.';
 			}
 			else
 			{
@@ -36,7 +86,7 @@
 		if(isset($_POST['message']) && $_POST['message']=='')
 		{
 			$_SESSION['SET_TYPE'] = 'error';
-			$_SESSION['SET_FLASH'] = 'Nachricht benötigt.';
+			$_SESSION['SET_FLASH'] = 'Nachricht benï¿½tigt.';
 		}
 		else
 		{
@@ -117,6 +167,13 @@
 				window.location.href = '<?php echo(DOMAIN_NAME_PATH)?>view_edit_appointment.php?appointment_id=<?php echo $_GET['appointment_id'];?>&del_id='+id;
 			}
 		}
+		function delete_appointment(id)
+		{
+			if(confirm('Sind Sie sicher, dass Sie diesen Termin wirklich l\xD6schen?'))
+			{
+				window.location.href = '<?php echo(DOMAIN_NAME_PATH)?>view_edit_appointment.php?del_appointment_id='+id;
+			}
+		}
 		$(function(){
 			$("#short_msg_form").validationEngine();
 		});
@@ -162,6 +219,7 @@
 										{
 									?>
 									<a href="edit_appointment.php?appointment_id=<?php echo(base64_encode($find_appointment['id'].IDHASH));?>"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
+									<a href="javascript:void(0)" onclick="delete_appointment('<?php echo(base64_encode($find_appointment['id'].IDHASH));?>');" title="Delete Appointment"><span class="glyphicon glyphicon-trash"></span></a>&nbsp;&nbsp;
 									<?php
 										}
 									?>

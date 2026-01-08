@@ -19,4 +19,5 @@ define( "PRODUCT", "products" );
 define( "PAYMENT", "payment_info_masters" );
 define( "EXTRA_PAYMENT", "extra_payments" );
 define( "PDF", "pdf_masters" );
+define( "NOTIFICATIONS", "notifications" );
 ?>

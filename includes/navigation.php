@@ -88,6 +88,7 @@
 				{
 			?>
 			<p class="cate <?php echo($current_page_name=="call-back-list.php" ? "active_menu" : "");?>"><a href = "call-back-list.php"><img src="img/phone.png" width="20" height="20" border="0" alt="">&nbsp;&nbsp;Anrufnotiz</a></p>
+			<p class="cate <?php echo($current_page_name=="notification.php" ? "active_menu" : "");?>"><a href = "notification.php"><img src="img/notification.png" width="20" height="20" border="0" alt="">&nbsp;&nbsp;Benachrichtigungen</a></p>
 			<?php
 				}
 			?>
