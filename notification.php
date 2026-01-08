@@ -76,41 +76,25 @@
 	
 	$offset = ($page-1) * $record_no;
 	
-	$fields = "n.id, n.appointment_id, n.type, n.is_success, n.sent_at, 
+	$fields = "n.id, n.appointment_id, n.is_email_success, n.is_sms_success, n.sent_at, 
 		u.person_name as customer_name, 
 		a.subject, a.start_date, a.end_date";
 	
 	$notification_list = find('all', $table, $fields, $where_clause . " ORDER BY n.sent_at DESC LIMIT " . $offset . "," . $record_no, $execute);
 	
-	// Group notifications by appointment for display
+	// Process notifications for display (one record per appointment now)
 	$grouped_notifications = array();
 	foreach($notification_list as $notification) {
 		$appointment_id = $notification['appointment_id'];
-		if(!isset($grouped_notifications[$appointment_id])) {
-			$grouped_notifications[$appointment_id] = array(
-				'customer_name' => $notification['customer_name'],
-				'subject' => $notification['subject'],
-				'start_date' => $notification['start_date'],
-				'end_date' => $notification['end_date'],
-				'email_status' => 'N/A',
-				'email_timestamp' => '',
-				'sms_status' => 'N/A',
-				'sms_timestamp' => '',
-				'latest_timestamp' => ''
-			);
-		}
-		
-		if($notification['type'] == 'email') {
-			$grouped_notifications[$appointment_id]['email_status'] = $notification['is_success'] ? 'Erfolgreich' : 'Fehlgeschlagen';
-			$grouped_notifications[$appointment_id]['email_timestamp'] = $notification['sent_at'];
-		} else if($notification['type'] == 'sms') {
-			$grouped_notifications[$appointment_id]['sms_status'] = $notification['is_success'] ? 'Erfolgreich' : 'Fehlgeschlagen';
-			$grouped_notifications[$appointment_id]['sms_timestamp'] = $notification['sent_at'];
-		}
-		
-		if($notification['sent_at'] > $grouped_notifications[$appointment_id]['latest_timestamp']) {
-			$grouped_notifications[$appointment_id]['latest_timestamp'] = $notification['sent_at'];
-		}
+		$grouped_notifications[$appointment_id] = array(
+			'customer_name' => $notification['customer_name'],
+			'subject' => $notification['subject'],
+			'start_date' => $notification['start_date'],
+			'end_date' => $notification['end_date'],
+			'email_status' => ($notification['is_email_success'] == 1) ? 'Erfolg' : (($notification['is_email_success'] === null || $notification['is_email_success'] === '') ? 'N/A' : 'Fehlgeschlagen'),
+			'sms_status' => ($notification['is_sms_success'] == 1) ? 'Erfolg' : (($notification['is_sms_success'] === null || $notification['is_sms_success'] === '') ? 'N/A' : 'Fehlgeschlagen'),
+			'latest_timestamp' => $notification['sent_at']
+		);
 	}
 	
 	$page_link = LINKPERPAGE;
@@ -175,7 +159,7 @@
 								<td><?php echo change_date_format($notification['start_date']);?></td>
 								<td>
 									<?php 
-										if($notification['email_status'] == 'Erfolgreich') {
+										if($notification['email_status'] == 'Erfolg') {
 											echo '<span style="color: green;">✓ ' . $notification['email_status'] . '</span>';
 										} else if($notification['email_status'] == 'Fehlgeschlagen') {
 											echo '<span style="color: red;">✗ ' . $notification['email_status'] . '</span>';
@@ -186,7 +170,7 @@
 								</td>
 								<td>
 									<?php 
-										if($notification['sms_status'] == 'Erfolgreich') {
+										if($notification['sms_status'] == 'Erfolg') {
 											echo '<span style="color: green;">✓ ' . $notification['sms_status'] . '</span>';
 										} else if($notification['sms_status'] == 'Fehlgeschlagen') {
 											echo '<span style="color: red;">✗ ' . $notification['sms_status'] . '</span>';
